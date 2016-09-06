@@ -55,7 +55,7 @@ points(z, appm, pch = 4)
 # 5)
 # integral form for flat universes
 
-Dl_integ <- function(z, omegaM, h=0.7){
+Dl_integ <- function(z, omegaM, h=1){
   return( 3000 / h * (1+z) * integrate(integrand, omegaM = omegaM, lower = 0, upper = z)$value )
 }
 
@@ -68,7 +68,9 @@ mu_integ <- function(z, omegaM, h=0.7){
 }
 
 z <- seq(0,2,0.01)
-lapply(z, function(x) mu_integ(x, 0.3))
+
+Dl_integ(1, 0.3)
+points(z,lapply(z, function(x) mu_integ(x, 0.3)))
 
 
 # integral form for general (non-flat) universes
@@ -81,18 +83,16 @@ Dl_general <- function(z, omegaM, omegaL, h=0.7){
   
   if(omega > 1){
     r <- sqrt(abs(1-(omegaM+omegaL))) * rint
-    return( (1+z) * 2.9979e8 / h*100000 / sqrt(abs(1-omega)) * sin(r) )
+    return( (1+z) * 2.9979e8 / (h*100000) / sqrt(abs(1-omega)) * sin(r) )
     
   }else if(omega < 1){
     r <- sqrt(abs(1-(omegaM+omegaL))) * rint
-    return( (1+z) * 2.9979e8 / h*100000 / sqrt(abs(1-omega)) * sinh(r) )
+    return( (1+z) * 2.9979e8 / (h*100000) / sqrt(abs(1-omega)) * sinh(r) )
     
   }else{
-    return( (1+z) * 2.9979e8 * rint / h*100000 )
+    return( (1+z) * 2.9979e8 * rint / (h*100000) )
     
   }
-  
-  #return( (1+z) * 2.9979e8 / h*100000 / sqrt(abs(1-omega)) * Sk )
 }
 
 rz <- function(z, omegaM, omegaL){
@@ -103,5 +103,5 @@ r_integrand <- function(z, omegaM, omegaL){
   1 / sqrt(omegaM * (1+z)^3 + omegaL + (1-(omegaM+omegaL))*(1+z)^2)
 }
 
-Dl_general(0.5, 0.3, 0.7)
+Dl_general(1, omegaM = 0.3, omegaL = 0.7)
 
