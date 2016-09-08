@@ -72,9 +72,16 @@ apply(chains, 2, function(x) sqrt(Vhat(x) / W(x)) )
 ## Dataframes
 
 melt_dataframes <- function(chains, burnin=F){
+  
   h_df = data.frame(chains[,1])
   omegaM_df = data.frame(chains[,2])
   omegaL_df = data.frame(chains[,3])
+  
+  if(burnin){
+    h_df = h_df[burnin:nrow(h_df),]
+    omegaM_df = h_df[burnin:nrow(omegaM_df),]
+    omegaL_df = h_df[burnin:nrow(omegaL_df),]
+  }
   
   # add id column
   ids <- seq.int(nrow(h_df))
@@ -92,19 +99,17 @@ melt_dataframes <- function(chains, burnin=F){
   rbind(h_df, omegaM_df, omegaL_df)
 }
 
-df <- melt_dataframes(chains, burnin)
+df <- melt_dataframes(chains)
 
 ## Trace plots
 m <- ggplot(df) + geom_line(aes(x=id, y=value, colour=variable))
 m + facet_wrap(~ param)
 
 ## BURN-IN
-burnin <- 5000
+burnin <- 1000
+df <- melt_dataframes(chains, burnin=burnin)
 
-
-df = df[burnin:nrow(df),]
-
-
+scatterplotMatrix(df, diagonal="density", smooth=F, reg.line = F, ellipse=T)
 
 
 
